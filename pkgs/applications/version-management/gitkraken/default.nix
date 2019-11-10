@@ -1,29 +1,42 @@
+
 { stdenv, libXcomposite, libgnome-keyring, makeWrapper, udev, curl, alsaLib
 , libXfixes, atk, gtk3, libXrender, pango, gnome3, cairo, freetype, fontconfig
 , libX11, libXi, libxcb, libXext, libXcursor, glib, libXScrnSaver, libxkbfile, libXtst
-, nss, nspr, cups, fetchurl, expat, gdk-pixbuf, libXdamage, libXrandr, dbus
+, nss, nspr, cups, fetchurl, fetchzip, expat, gdk-pixbuf, libXdamage, libXrandr, dbus
 , dpkg, makeDesktopItem, openssl, wrapGAppsHook, at-spi2-atk, libuuid
 , e2fsprogs, krb5
+, Security, libiconv
+, enableSystemd ? stdenv.isLinux && !stdenv.hostPlatform.isMusl
 }:
 
 with stdenv.lib;
 
 let
+  version = "6.3.1";
+
+  sources = let
+    base = "https://release.axocdn.com";
+  in {
+    x86_64-linux = fetchurl {
+      url = "${base}/linux/GitKraken-v${version}.tar.gz";
+      sha256 = "1p1z93w8x84slnv02cp4nhxg00fsz5g6sa29sycbmqqa7znsqyjh";
+    };
+    x86_64-darwin = fetchzip {
+      url = "${base}/darwin/GitKraken-v${version}.zip";
+      sha256 = "0b5fsdrgqrbcz3mkwi1i4a9siir4v30ndbcx097437fp9dwxrzzm";
+    };
+  };
+
   curlWithGnuTls = curl.override { gnutlsSupport = true; sslSupport = false; };
 in
 stdenv.mkDerivation rec {
   pname = "gitkraken";
-  version = "6.3.1";
+  inherit version;
 
-  src = fetchurl {
-    url = "https://release.axocdn.com/linux/GitKraken-v${version}.deb";
-    sha256 = "071i3z6jym6f5nfy2mq36m45jywpk53w1vpzr2n599pabdkavj89";
-  };
+  src = sources.${stdenv.hostPlatform.system} or (throw "unsupported system: ${stdenv.hostPlatform.system}");
 
   libPath = makeLibraryPath [
     stdenv.cc.cc.lib
-    curlWithGnuTls
-    udev
     libX11
     libXext
     libXcursor
@@ -36,10 +49,8 @@ stdenv.mkDerivation rec {
     nss
     nspr
     cups
-    alsaLib
     expat
     gdk-pixbuf
-    dbus
     libXdamage
     libXrandr
     atk
@@ -59,6 +70,7 @@ stdenv.mkDerivation rec {
     krb5
   ];
 
+
   desktopItem = makeDesktopItem {
     name = "gitkraken";
     exec = "gitkraken";
@@ -69,13 +81,11 @@ stdenv.mkDerivation rec {
     comment = "Graphical Git client from Axosoft";
   };
 
-  nativeBuildInputs = [ dpkg makeWrapper wrapGAppsHook ];
-  buildInputs = [ gtk3 gnome3.adwaita-icon-theme ];
-
-  unpackCmd = ''
-    mkdir out
-    dpkg -x $curSrc out
-  '';
+  nativeBuildInputs = [ makeWrapper wrapGAppsHook ];
+  buildInputs = [ gtk3 gnome3.adwaita-icon-theme ]
+    ++ optionals enableSystemd [ dbus udev ]
+    ++ optionals stdenv.isDarwin [ Security libiconv ]
+    ++ optionals stdenv.isLinux [ dbus udev alsaLib curlWithGnuTls ];
 
   installPhase = ''
     runHook preInstall
@@ -107,7 +117,7 @@ stdenv.mkDerivation rec {
     homepage = https://www.gitkraken.com/;
     description = "The downright luxurious and most popular Git client for Windows, Mac & Linux";
     license = licenses.unfree;
-    platforms = platforms.linux;
+    platforms = platforms.linux ++ platforms.darwin;
     maintainers = with maintainers; [ xnwdd evanjs ];
   };
 }
