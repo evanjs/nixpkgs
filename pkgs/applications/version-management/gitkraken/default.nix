@@ -1,5 +1,5 @@
 
-{ stdenv, libXcomposite, libgnome-keyring, makeWrapper, udev, curl, alsaLib
+{ stdenv, libXcomposite, libgnome-keyring, udev, curl, alsaLib
 , libXfixes, atk, gtk3, libXrender, pango, gnome3, cairo, freetype, fontconfig
 , libX11, libXi, libxcb, libXext, libXcursor, glib, libXScrnSaver, libxkbfile, libXtst
 , nss, nspr, cups, fetchurl, fetchzip, expat, gdk-pixbuf, libXdamage, libXrandr, dbus
@@ -35,39 +35,45 @@ stdenv.mkDerivation rec {
 
   src = sources.${stdenv.hostPlatform.system} or (throw "unsupported system: ${stdenv.hostPlatform.system}");
 
-  libPath = makeLibraryPath [
-    stdenv.cc.cc.lib
-    libX11
-    libXext
-    libXcursor
-    libXi
-    libxcb
-    glib
-    libXScrnSaver
-    libxkbfile
-    libXtst
-    nss
-    nspr
-    cups
-    expat
-    gdk-pixbuf
-    libXdamage
-    libXrandr
-    atk
-    pango
-    cairo
-    freetype
-    fontconfig
-    libXcomposite
-    libXfixes
-    libXrender
-    gtk3
-    libgnome-keyring
-    openssl
-    at-spi2-atk
-    libuuid
-    e2fsprogs
-    krb5
+  buildInputs = [ ]
+    ++ optionals enableSystemd [ dbus udev ]
+    ++ optionals stdenv.isDarwin [ Security libiconv ]
+    ++ optionals stdenv.isLinux [ 
+      alsaLib
+      at-spi2-atk
+      atk
+      cairo
+      cups
+      curlWithGnuTls
+      e2fsprogs
+      expat
+      fontconfig
+      freetype
+      gdk-pixbuf
+      glib
+      gnome3.adwaita-icon-theme
+      gtk3
+      krb5
+      libX11
+      libXScrnSaver
+      libXcomposite
+      libXcursor
+      libXdamage
+      libXext
+      libXfixes
+      libXi
+      libXrandr
+      libXrender
+      libXtst
+      libgnome-keyring
+      libuuid
+      libxcb
+      libxkbfile
+      nspr
+      nss
+      openssl
+      pango
+      stdenv.cc.cc.lib
   ];
 
 
@@ -81,37 +87,42 @@ stdenv.mkDerivation rec {
     comment = "Graphical Git client from Axosoft";
   };
 
-  nativeBuildInputs = [ makeWrapper wrapGAppsHook ];
-  buildInputs = [ gtk3 gnome3.adwaita-icon-theme ]
-    ++ optionals enableSystemd [ dbus udev ]
-    ++ optionals stdenv.isDarwin [ Security libiconv ]
-    ++ optionals stdenv.isLinux [ dbus udev alsaLib curlWithGnuTls ];
+  nativeBuildInputs = [ wrapGAppsHook ];
 
-  installPhase = ''
-    runHook preInstall
-    mkdir $out
-    pushd usr
-    pushd share
-    substituteInPlace applications/gitkraken.desktop \
-      --replace /usr/share/gitkraken $out/bin
-    popd
-    rm -rf bin/gitkraken share/lintian
-    cp -av share bin $out/
-    popd
+  installPhase = if stdenv.isDarwin
+    then ''
+      runHook preInstall
+      mkdir -p $out/bin/GitKraken.app
+      ls
+      cp -rav Contents $out/bin/Gitkraken.app/
+      runHook postInstall
+    ''
+    else ''
+      runHook preInstall
+      mkdir $out
+      pushd usr
+      pushd share
+      substituteInPlace applications/gitkraken.desktop \
+        --replace /usr/share/gitkraken $out/bin
+      popd
+      rm -rf bin/gitkraken share/lintian
+      cp -av share bin $out/
+      popd
 
-    ln -s $out/share/gitkraken/gitkraken $out/bin/gitkraken
-    runHook postInstall
+      ln -s $out/share/gitkraken/gitkraken $out/bin/gitkraken
+      runHook postInstall
   '';
 
-  postFixup = ''
+  postFixup = if stdenv.isLinux then ''
     pushd $out/share/gitkraken
     patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" gitkraken
 
     for file in $(find . -type f \( -name \*.node -o -name gitkraken -o -name \*.so\* \) ); do
-      patchelf --set-rpath ${libPath}:$out/share/gitkraken $file || true
+      patchelf --set-rpath "${stdenv.lib.makeLibraryPath buildInputs}:$ORIGIN $file
     done
     popd
-  '';
+  '' else ''
+'';
 
   meta = {
     homepage = https://www.gitkraken.com/;
