@@ -6800,6 +6800,8 @@ in
 
   translate-shell = callPackage ../applications/misc/translate-shell { };
 
+  translate-toolkit = with python3Packages; toPythonApplication translate-toolkit;
+
   trash-cli = callPackage ../tools/misc/trash-cli { };
 
   trebleshot = libsForQt5.callPackage ../applications/networking/trebleshot { };

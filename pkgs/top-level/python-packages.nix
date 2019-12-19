@@ -5336,6 +5336,8 @@ in {
 
   transaction = callPackage ../development/python-modules/transaction { };
 
+  translate-toolkit = callPackage ../development/python-modules/translate-toolkit { }; 
+
   TurboCheetah = callPackage ../development/python-modules/TurboCheetah { };
 
   tweepy = callPackage ../development/python-modules/tweepy { };
