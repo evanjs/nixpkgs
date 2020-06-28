@@ -9259,6 +9259,7 @@ in
     inherit (darwin.apple_sdk.frameworks) Security;
   };
   cargo-bloat = callPackage ../development/tools/rust/cargo-bloat { };
+  cargo-cache = callPackage ../development/tools/rust/cargo-cache { };
   cargo-crev = callPackage ../development/tools/rust/cargo-crev {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
