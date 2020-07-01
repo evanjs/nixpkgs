@@ -2,6 +2,7 @@
 , rustPlatform, pkgconfig, openssl
 # darwin dependencies
 , Security, CoreFoundation, libiconv
+, cargo-insta
 }:
 
 rustPlatform.buildRustPackage rec {
@@ -18,22 +19,27 @@ rustPlatform.buildRustPackage rec {
   cargoSha256 = "0v50fkyf0a77l7whxalwnfqfi8lxy82z2gpd0fa0ib80qjla2n5z";
   cargoPatches = [ ./cargo-lock.patch ];
 
+  checkInputs = [ cargo-insta ];
+
   # Multiple tests require internet connectivity, so they are disabled here.
   # If we ever get cargo-insta (https://crates.io/crates/insta) in tree,
   # we might be able to run these with something like
   # `cargo insta review` in the `preCheck` phase.
-  checkPhase = ''
-    cd cargo-geiger/tests/snapshots
-    for file in *
-    do
-      mv $file r#$file
-    done
-    cd -
-    cargo test -- \
-    --skip test_package::case_2 \
-    --skip test_package::case_3 \
-    --skip test_package::case_6
+  preCheck = ''
+    cargo insta review
   '';
+  #checkPhase = ''
+    #cd cargo-geiger/tests/snapshots
+    #for file in *
+    #do
+      #mv $file r#$file
+    #done
+    #cd -
+    #cargo test -- \
+    #--skip test_package::case_2 \
+    #--skip test_package::case_3 \
+    #--skip test_package::case_6
+  #'';
 
   buildInputs = [ openssl ] ++ lib.optionals stdenv.isDarwin [ Security libiconv ];
   nativeBuildInputs = [ pkgconfig ];
