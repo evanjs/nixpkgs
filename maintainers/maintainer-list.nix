@@ -313,6 +313,12 @@
     githubId = 43479487;
     name = "Titouan Biteau";
   };
+  alerque = {
+    email = "caleb@alerque.com";
+    github = "alerque";
+    githubId = 173595;
+    name = "Caleb Maclennan";
+  };
   alexarice = {
     email = "alexrice999@hotmail.co.uk";
     github = "alexarice";
@@ -4738,6 +4744,12 @@
     github = "loskutov";
     githubId = 1202012;
     name = "Ignat Loskutov";
+  };
+  louisdk1 = {
+    email = "louis@louis.dk";
+    github = "louisdk1";
+    githubId = 4969294;
+    name = "Louis Tim Larsen";
   };
   lovek323 = {
     email = "jason@oconal.id.au";
