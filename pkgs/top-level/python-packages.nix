@@ -6384,6 +6384,8 @@ in {
     });
   in if pythonOlder "3.5" then scipy_1_2 else scipy_;
 
+  sclack = callPackage ../development/python-modules/sclack { };
+
   scour = callPackage ../development/python-modules/scour { };
 
   scp = callPackage ../development/python-modules/scp { };
