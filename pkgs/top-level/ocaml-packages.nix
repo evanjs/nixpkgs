@@ -220,15 +220,19 @@ let
     dune = callPackage ../development/tools/ocaml/dune { };
 
     dune_2 =
-      if lib.versionAtLeast ocaml.version "4.07"
+      if lib.versionAtLeast ocaml.version "4.08"
       then callPackage ../development/tools/ocaml/dune/2.nix { }
       else if lib.versionAtLeast ocaml.version "4.02"
       then pkgs.dune_2
       else throw "dune_2 is not available for OCaml ${ocaml.version}";
 
+    dune-action-plugin = callPackage ../development/ocaml-modules/dune-action-plugin { };
+
     dune-build-info = callPackage ../development/ocaml-modules/dune-build-info { };
 
     dune-configurator = callPackage ../development/ocaml-modules/dune-configurator { };
+
+    dune-glob = callPackage ../development/ocaml-modules/dune-glob { };
 
     dune-private-libs = callPackage ../development/ocaml-modules/dune-private-libs { };
 

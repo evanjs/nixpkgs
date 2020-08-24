@@ -7629,6 +7629,8 @@ in
 
   vpnc = callPackage ../tools/networking/vpnc { };
 
+  vpn-slice = python3Packages.callPackage ../tools/networking/vpn-slice { };
+
   vp = callPackage ../applications/misc/vp {
     # Enable next line for console graphics. Note that
     # it requires `sixel` enabled terminals such as mlterm
@@ -12723,6 +12725,8 @@ in
 
   haxor-news = callPackage ../applications/misc/haxor-news { };
 
+  hdt = callPackage ../misc/hdt {};
+
   herqq = libsForQt5.callPackage ../development/libraries/herqq { };
 
   heyefi = haskellPackages.heyefi;
@@ -17157,7 +17161,11 @@ in
 
   criu = callPackage ../os-specific/linux/criu { };
 
-  cryptsetup = callPackage ../os-specific/linux/cryptsetup { };
+  cryptsetup = callPackage ../os-specific/linux/cryptsetup {
+    # cryptsetup only really needs the devmapper component of cryptsetup
+    # but itself is used as a library in systemd (=udev)
+    lvm2 = lvm2.override { udev = null; };
+  };
 
   cramfsprogs = callPackage ../os-specific/linux/cramfsprogs { };
 
@@ -17502,6 +17510,14 @@ in
     ];
   };
 
+  linux_5_8 = callPackage ../os-specific/linux/kernel/linux-5.8.nix {
+    kernelPatches = [
+      kernelPatches.bridge_stp_helper
+      kernelPatches.request_key_helper
+      kernelPatches.export_kernel_fpu_functions."5.3"
+    ];
+  };
+
   linux_testing = callPackage ../os-specific/linux/kernel/linux-testing.nix {
     kernelPatches = [
       kernelPatches.bridge_stp_helper
@@ -17727,7 +17743,7 @@ in
 
   # Update this when adding the newest kernel major version!
   # And update linux_latest_for_hardened below if the patches are already available
-  linuxPackages_latest = linuxPackages_5_7;
+  linuxPackages_latest = linuxPackages_5_8;
   linux_latest = linuxPackages_latest.kernel;
 
   # Build the kernel modules for the some of the kernels.
@@ -17742,6 +17758,7 @@ in
   linuxPackages_4_19 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_19);
   linuxPackages_5_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_4);
   linuxPackages_5_7 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_7);
+  linuxPackages_5_8 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_5_8);
 
   # When adding to this list:
   # - Update linuxPackages_latest to the latest version
@@ -18233,9 +18250,6 @@ in
     utillinux = utillinuxMinimal; # break the cyclic dependency
   };
   udev = systemd; # TODO: move to aliases.nix
-
-  # standalone cryptsetup generator for systemd
-  systemd-cryptsetup-generator = callPackage ../os-specific/linux/systemd/cryptsetup-generator.nix { };
 
   systemd-wait = callPackage ../os-specific/linux/systemd-wait { };
 
