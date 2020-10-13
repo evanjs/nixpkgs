@@ -8,14 +8,14 @@
 }:
 buildPythonPackage rec {
   pname = "sclack";
-  version = "unstable-2019-07-15";
+  version = "unstable-2020-09-23";
   disabled = pythonOlder "3.4";
 
   src = fetchFromGitHub {
     owner = "haskellcamargo";
     repo = "sclack";
-    rev = "4825249f9706ded585ac0d42ac7d86262fa14fd7";
-    sha256 = "1dc3s3jn2ig55d8955fnjyppjkaw92mrzwpkv2hd0r8v1mffavi6";
+    rev = "89838551f314dc9fd754923b9afad1b7660740c0";
+    sha256 = "1f2y6pfi9xb0z0d4lrbq7i3lmdjd7q8kxkkbagql0dql1wrhd51z";
   };
 
   propagatedBuildInputs = with pythonPackages; [
@@ -24,7 +24,7 @@ buildPythonPackage rec {
     requests
     slackclient
     urwid
-    urwid_readline
+    urwid-readline
   ];
 
   patchPhase = ''
