@@ -1,6 +1,8 @@
 { stdenv, lib, fetchurl, fetchpatch
 # Channel data:
 , channel, upstream-info
+# Helper functions:
+, chromiumVersionAtLeast, versionRange
 
 # Native build inputs:
 , ninja, pkg-config
@@ -106,18 +108,6 @@ let
   buildPath = "out/${buildType}";
   libExecPath = "$out/libexec/${packageName}";
 
-  warnObsoleteVersionConditional = min-version: result:
-    let ungoogled-version = (importJSON ./upstream-info.json).ungoogled-chromium.version;
-    in warnIf (versionAtLeast ungoogled-version min-version) "chromium: ungoogled version ${ungoogled-version} is newer than a conditional bounded at ${min-version}. You can safely delete it."
-      result;
-  chromiumVersionAtLeast = min-version:
-    let result = versionAtLeast upstream-info.version min-version;
-    in  warnObsoleteVersionConditional min-version result;
-  versionRange = min-version: upto-version:
-    let inherit (upstream-info) version;
-        result = versionAtLeast version min-version && versionOlder version upto-version;
-    in warnObsoleteVersionConditional upto-version result;
-
   ungoogler = ungoogled-chromium {
     inherit (upstream-info.deps.ungoogled-patches) rev sha256;
   };
@@ -169,9 +159,9 @@ let
       ./patches/no-build-timestamps.patch
       # For bundling Widevine (DRM), might be replaceable via bundle_widevine_cdm=true in gnFlags:
       ./patches/widevine-79.patch
+    ] ++ lib.optionals (versionRange "91" "94") [
       # Fix the build by adding a missing dependency (s. https://crbug.com/1197837):
       ./patches/fix-missing-atspi2-dependency.patch
-    ] ++ lib.optionals (versionRange "91" "94.0.4583.0") [
       # Required as dependency for the next patch:
       (githubPatch {
         # Reland "Reland "Linux sandbox syscall broker: use struct kernel_stat""
@@ -256,15 +246,28 @@ let
 
     gnFlags = mkGnFlags ({
       # Main build and toolchain settings:
+      # Create an official and optimized release build (only official builds
+      # should be distributed to users, as non-official builds are intended for
+      # development and may not be configured appropriately for production,
+      # e.g. unsafe developer builds have developer-friendly features that may
+      # weaken or disable security measures like sandboxing or ASLR):
       is_official_build = true;
+      # Build Chromium using the system toolchain (for Linux distributions):
       custom_toolchain = "//build/toolchain/linux/unbundle:default";
       host_toolchain = "//build/toolchain/linux/unbundle:default";
+      # Don't build against a sysroot image downloaded from Cloud Storage:
       use_sysroot = false;
+      # The default value is hardcoded instead of using pkg-config:
       system_wayland_scanner_path = "${wayland}/bin/wayland-scanner";
+      # Because we use a different toolchain / compiler version:
       treat_warnings_as_errors = false;
+      # We aren't compiling with Chrome's Clang (would enable Chrome-specific
+      # plugins for enforcing coding guidelines, etc.):
       clang_use_chrome_plugins = false;
-      blink_symbol_level = 0;
+      # Disable symbols (they would negatively affect the performance of the
+      # build since the symbols are large and dealing with them is slow):
       symbol_level = 0;
+      blink_symbol_level = 0;
 
       # Google API key, see: https://www.chromium.org/developers/how-tos/api-keys
       # Note: The API key is for NixOS/nixpkgs use ONLY.
