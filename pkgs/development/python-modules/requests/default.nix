@@ -9,6 +9,7 @@
 , pytestCheckHook
 , urllib3
 , isPy27
+, fetchpatch
 }:
 
 buildPythonPackage rec {
@@ -20,7 +21,13 @@ buildPythonPackage rec {
     sha256 = "sha256-J5c91KkEpPE7JjoZyGbBO5KjntHJZGVfAl8/jT11uAQ=";
   };
 
-  patches = [ ./0001-Prefer-NixOS-Nix-default-CA-bundles-over-certifi.patch ];
+  patches = [
+    ./0001-Prefer-NixOS-Nix-default-CA-bundles-over-certifi.patch
+    (fetchpatch {
+      url = "https://patch-diff.githubusercontent.com/raw/psf/requests/pull/5596.diff";
+      sha256 = "0ky8q28ibp9134h05bv200nwrnnv93j9jpbvi9s82805am237h66";
+    })
+  ];
 
   postPatch = ''
     # Use latest idna
