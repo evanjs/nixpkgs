@@ -4970,6 +4970,12 @@
     githubId = 54999;
     name = "Ariel Nunez";
   };
+  interruptinuse = {
+    email = "interruptinuse@gmail.com";
+    github = "interruptinuse";
+    githubId = 49772408;
+    name = "inty";
+  };
   irenes = {
     name = "Irene Knapp";
     email = "ireneista@gmail.com";
