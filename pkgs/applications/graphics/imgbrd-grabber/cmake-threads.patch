@@ -1,0 +1,21 @@
+diff --git a/src/gui/CMakeLists.txt b/src/gui/CMakeLists.txt
+index 03d1e797..bef25b9e 100644
+--- a/gui/CMakeLists.txt
++++ b/gui/CMakeLists.txt
+@@ -115,6 +115,7 @@ if(USE_BREAKPAD)
+ 		endif()
+ 	elseif(UNIX)
+ 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
++		find_package(Threads REQUIRED)
+ 		list(APPEND LIBS "${BREAKPAD}/src/client/linux/libbreakpad_client.a")
+ 	endif()
+ 	message(STATUS "Using Google Breakpad from ${BREAKPAD}")
+@@ -129,7 +130,7 @@ else()
+ 	add_executable(${PROJECT_NAME} ${SOURCES} ${FORMS} ${UTILS_SOURCES})
+ endif()
+ 
+-target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${LIBS} lib)
++target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${LIBS} lib Threads::Threads)
+ 
+ if(ANDROID)
+ 	# SSL

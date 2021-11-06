@@ -25898,8 +25898,18 @@ with pkgs;
 
   img2pdf = with python3Packages; toPythonApplication img2pdf;
 
-  imgbrd-grabber = qt5.callPackage ../applications/graphics/imgbrd-grabber {
-    typescript = nodePackages.typescript;
+  imgbrd-grabber = qt5.callPackage ../applications/graphics/imgbrd-grabber/default.nix {
+
+    # TODO: This has been fixed upstream.  Remove override when the change is merged into master
+    # Resolved by: https://github.com/Bionus/imgbrd-grabber/commit/2f7fbd3c71c302575a6668a96fc6250886bedcd7
+    typescript = nodePackages.typescript.override {
+      version = "4.3.5";
+      src = fetchurl {
+        url = "https://registry.npmjs.org/typescript/-/typescript-4.3.5.tgz";
+        sha512 = "DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==";
+      };
+    };
+    qscintilla = libsForQt5.qscintilla;
   };
 
   imgcat = callPackage ../applications/graphics/imgcat { };

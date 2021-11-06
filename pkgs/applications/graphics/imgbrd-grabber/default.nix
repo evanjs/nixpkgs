@@ -1,12 +1,14 @@
-{ lib, stdenv
+{ lib
+, stdenv
 , cmake
 , fetchFromGitHub
 , wrapQtAppsHook
+, qscintilla
+, qtnetworkauth
 , qtmultimedia
 , qttools
 , qtscript
 , qtdeclarative
-, qtnetworkauth
 , qtbase
 , autogen
 , automake
@@ -17,17 +19,18 @@
 , openssl
 , rsync
 , typescript
+, breakpad
 }:
 
 stdenv.mkDerivation rec {
   pname = "imgbrd-grabber";
-  version = "7.5.1";
+  version = "7.6.2";
 
   src = fetchFromGitHub {
     owner = "Bionus";
     repo = "imgbrd-grabber";
     rev = "v${version}";
-    sha256 = "sha256-40JCdtRhAQpz2lBGmYh2MgA9rRzHmOZx7lWW0IbfjP4=";
+    sha256 = "06vgkwpk951fywwfcsw6p3nqsaa7yiaxfi5nrbd6z9y0vifgln90";
     fetchSubmodules = true;
   };
 
@@ -36,14 +39,16 @@ stdenv.mkDerivation rec {
     makeWrapper
     libpulseaudio
     typescript
+    breakpad
   ];
 
   nativeBuildInputs = [
+    qscintilla
+    qtnetworkauth
     qtmultimedia
     qtbase
     qtdeclarative
     qttools
-    qtnetworkauth
     nodejs
     cmake
     wrapQtAppsHook
@@ -51,27 +56,25 @@ stdenv.mkDerivation rec {
 
   extraOutputsToLink = [ "doc" ];
 
+  patches = [
+    ./variableToString-instantiation.patch
+    ./cmake-threads.patch # TODO: remove when upstream fixes gui/CMakeLists.txt
+  ];
+
   postPatch = ''
-    # the package.sh script provides some install helpers
-    # using this might make it easier to maintain/less likely for the
-    # install phase to fail across version bumps
-    patchShebangs ./scripts/package.sh
-
-    # ensure the script uses the rsync package from nixpkgs
-    substituteInPlace ../scripts/package.sh --replace "rsync" "${rsync}/bin/rsync"
-
-
     # the npm build step only runs typescript
     # run this step directly so it doesn't try and fail to download the unnecessary node_modules, etc.
     substituteInPlace ./sites/CMakeLists.txt --replace "npm install" "npm run build"
+
+    sed "s;\''${BREAKPAD}/src/client/linux;\${breakpad}/lib;" -i ./gui/CMakeLists.txt
+    sed "s;\''${BREAKPAD}/src;${breakpad}/include/breakpad;" -i ./gui/CMakeLists.txt
+    substituteInPlace ./gui/CMakeLists.txt --replace 'set(BREAKPAD "~/Programmation/google-breakpad")' 'set(BREAKPAD "${breakpad}")'
 
     # remove the vendored catch2
     rm -rf tests/src/vendor/catch
 
     # link the catch2 sources from nixpkgs
     ln -sf ${catch2.src} tests/src/vendor/catch
-
-    sed "s|strict\": true|strict\": false|g" -i ./sites/tsconfig.json
   '';
 
   postInstall = ''
@@ -94,6 +97,6 @@ stdenv.mkDerivation rec {
     description = "Very customizable imageboard/booru downloader with powerful filenaming features";
     license = licenses.asl20;
     homepage = "https://bionus.github.io/imgbrd-grabber/";
-    maintainers = [ maintainers.evanjs ];
+    maintainers = with maintainers; [ evanjs interruptinuse ];
   };
 }
