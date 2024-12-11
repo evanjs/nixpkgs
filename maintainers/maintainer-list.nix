@@ -2304,6 +2304,12 @@
     githubId = 99703210;
     name = "Katherine Jamison";
   };
+  axka = {
+    name = "Axel Karjalainen";
+    email = "axel@axka.fi";
+    github = "axelkar";
+    githubId = 120189068;
+  };
   ayazhafiz = {
     email = "ayaz.hafiz.1@gmail.com";
     github = "hafiz";
@@ -5829,6 +5835,12 @@
     githubId = 129093;
     name = "Desmond O. Chang";
   };
+  dod-101 = {
+    email = "david.thievon@proton.me";
+    github = "DOD-101";
+    githubId = 131907205;
+    name = "David Thievon";
+  };
   domenkozar = {
     email = "domen@dev.si";
     github = "domenkozar";
@@ -7334,6 +7346,17 @@
     github = "firefly-cpp";
     githubId = 1633361;
     name = "Iztok Fister Jr.";
+  };
+  FirelightFlagboy = {
+    email = "firelight.flagboy+nixpkgs@gmail.com";
+    github = "FirelightFlagboy";
+    githubId = 30697622;
+    name = "Firelight Flagboy";
+    keys = [
+      {
+        fingerprint = "D6E2 4BD5 680C 609D D146  99B4 4304 CE0B A5E8 67D1";
+      }
+    ];
   };
   FireyFly = {
     email = "nix@firefly.nu";
@@ -10263,7 +10286,7 @@
     name = "jdev082";
   };
   jdreaver = {
-    email = "johndreaver@gmail.com";
+    email = "me@davidreaver.com";
     github = "jdreaver";
     githubId = 1253071;
     name = "David Reaver";
@@ -10495,6 +10518,18 @@
     github = "jigglycrumb";
     githubId = 1476865;
     name = "jigglycrumb";
+  };
+  jiriks74 = {
+    name = "Jiří Štefka";
+    email = "jiri@stefka.eu";
+    github = "jiriks74";
+    githubId = 54378412;
+    matrix = "@jiriks74:matrix.org";
+    keys = [
+      {
+        fingerprint = "563AC7887FD6414714A6ACAC1D5E30D3DB2264DE";
+      }
+    ];
   };
   jirkamarsik = {
     email = "jiri.marsik89@gmail.com";
@@ -13751,6 +13786,17 @@
     githubId = 28183516;
     name = "Mateusz Słodkowicz";
   };
+  mateusauler = {
+    email = "mateus@auler.dev";
+    github = "mateusauler";
+    githubId = 24767687;
+    name = "Mateus Auler";
+    keys = [
+      {
+        fingerprint = "A09D C093 3C37 4BFC 2B5A  269F 80A5 D62F 6EB7 D9F0";
+      }
+    ];
+  };
   math-42 = {
     email = "matheus.4200@gmail.com";
     github = "Math-42";
@@ -15452,6 +15498,12 @@
     githubId = 93013864;
     name = "nat-418";
   };
+  nateeag = {
+    github = "NateEag";
+    githubId = 837719;
+    name = "Nate Eagleson";
+    email = "nate@nateeag.com";
+  };
   nathan-gs = {
     email = "nathan@nathan.gs";
     github = "nathan-gs";
@@ -15712,6 +15764,12 @@
     githubId = 7845120;
     name = "Alex Martens";
   };
+  nezia = {
+    email = "anthony@nezia.dev";
+    github = "nezia1";
+    githubId = 43719748;
+    name = "Anthony Rodriguez";
+  };
   ngerstle = {
     name = "Nicholas Gerstle";
     email = "ngerstle@gmail.com";
@@ -15862,6 +15920,12 @@
     matrix = "@niklaskorz:korz.dev";
     github = "niklaskorz";
     githubId = 590517;
+  };
+  NiklasVousten = {
+    name = "Niklas Vousten";
+    email = "nixpkgs@vousten.dev";
+    github = "NiklasVousten";
+    githubId = 24965952;
   };
   nikstur = {
     email = "nikstur@outlook.com";
@@ -16318,6 +16382,13 @@
     name = "Oaksoaj";
     github = "oaksoaj";
     githubId = 103952141;
+  };
+  ob7 = {
+    name = "ob7";
+    email = "dev@ob7.us";
+    github = "ob7";
+    githubId = 6877929;
+    keys = [ { fingerprint = "5C1C 0251 FA85 8C62 0E96  7AC5 2766 5625 0571 34E4"; } ];
   };
   obadz = {
     email = "obadz-nixos@obadz.com";
@@ -17904,7 +17975,10 @@
     github = "JarvisCraft";
     githubId = 7693005;
     name = "Petr Portnov";
-    keys = [ { fingerprint = "884B 08D2 8DFF 6209 1857  C1C7 7E8F C8F7 D1BB 84A3"; } ];
+    keys = [
+      { fingerprint = "884B 08D2 8DFF 6209 1857  C1C7 7E8F C8F7 D1BB 84A3"; }
+      { fingerprint = "AA96 35AA F392 52BF 0E60  825E 1192 2217 F828 8484"; }
+    ];
   };
   progval = {
     email = "progval+nix@progval.net";
@@ -24294,6 +24368,12 @@
     github = "xokdvium";
     githubId = 145775305;
     name = "Sergei Zimmerman";
+  };
+  xosnrdev = {
+    email = "hello@xosnrdev.tech";
+    github = "xosnrdev";
+    githubId = 106241330;
+    name = "Success Kingsley";
   };
   xrelkd = {
     github = "xrelkd";

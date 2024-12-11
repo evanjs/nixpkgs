@@ -35,8 +35,6 @@
   libvdpau,
   rustPlatform,
   stdenv,
-  xdg-user-dirs,
-  zenity,
   copyDesktopItems,
   makeDesktopItem,
   replaceVars,
@@ -158,13 +156,7 @@ flutter324.buildFlutterApplication {
   '';
 
   extraWrapProgramArgs = ''
-    --prefix LD_LIBRARY_PATH : "$out/app/${pname}/lib" \
-    --prefix PATH : "${
-      lib.makeBinPath [
-        xdg-user-dirs
-        zenity
-      ]
-    }"
+    --prefix LD_LIBRARY_PATH : "$out/app/${pname}/lib"
   '';
 
   meta = {
