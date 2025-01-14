@@ -16223,7 +16223,8 @@ with pkgs;
 
   chiaki-ng = kdePackages.callPackage ../games/chiaki-ng { };
 
-  cockatrice = libsForQt5.callPackage ../games/cockatrice {
+  cockatrice = qt6Packages.callPackage ../games/cockatrice {
+    inherit (stdenv) mkDerivation;
     protobuf = protobuf_21;
   };
 
