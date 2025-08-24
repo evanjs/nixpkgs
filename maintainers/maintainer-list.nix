@@ -5574,6 +5574,12 @@
     githubId = 217543;
     name = "Damien Cassou";
   };
+  dan-kc = {
+    email = "daniel@keone.dev";
+    github = "dan-kc";
+    githubId = 63171098;
+    name = "Daniel Cox";
+  };
   dan-theriault = {
     email = "nix@theriault.codes";
     github = "Dan-Theriault";
@@ -13296,6 +13302,13 @@
     github = "keysmashes";
     githubId = 9433472;
     name = "ash";
+  };
+  keyzox = {
+    email = "nixpkgs@adjoly.fr";
+    github = "keyzox71";
+    matrix = "@keyzox:matrix.org";
+    githubId = 18579667;
+    name = "Adam J.";
   };
   kfollesdal = {
     email = "kfollesdal@gmail.com";
@@ -24502,6 +24515,12 @@
     github = "Stunkymonkey";
     githubId = 1315818;
     name = "Felix Bühler";
+  };
+  stupidcomputer = {
+    email = "ryan@beepboop.systems";
+    github = "stupidcomputer";
+    githubId = 108326967;
+    name = "Ryan Marina";
   };
   stupremee = {
     email = "jutus.k@protonmail.com";
